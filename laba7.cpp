@@ -1,17 +1,18 @@
-﻿
+
 #include <vector>
 #include <iostream>
 using namespace std;
 void prosmotr(vector <double> arr) {
+	short k = 0;
+	cout << "[ ";
 	for (size_t i = 0; i != arr.size(); ++i) {
-		if (i == 0) {
-			cout << "[ ";
-		}
-		cout << arr[i] << " ";
-		if (i == arr.size() - 1) {
-			cout << "]" << endl;
+		cout << arr[i];
+		++k;
+		if (k < arr.size()) {
+			cout << ", ";
 		}
 	}
+	cout << "]" << endl;
 	
 }
 void element(vector <double>& arr) {
@@ -29,13 +30,24 @@ void element2(vector <double>& arr) {
 void clear(vector <double>& arr) {
 	arr.clear();
 }
-void search(vector <double> arr) {
-	short a;
-	cout << "Введите индекс элемента" << endl;
+void search(vector <double> arr) { // 5 
+	short k = 0;
+	int a;
+	cout << "Введите число" << endl;
 	cin >> a;
-	cout << arr[a] << endl;
+	cout << "[";
+	for (int i = 0; i != arr.size(); ++i) {
+		if (arr[i] == a) {
+			++k;
+			if (k > 1) {
+				cout << ", ";
+			}
+			cout << i;
+		}
+	}
+	cout << "]" << endl;
 }
-void reverse(vector <double>& arr) {
+void reverse(vector <double>& arr) { 
 	vector <double> res;
 	bool flag = false;
 	cout << "Исходный: ";
@@ -53,7 +65,7 @@ void reverse(vector <double>& arr) {
 			res.push_back(arr[i]);
 		}
 	}
-	if (flag == false) {
+	if (flag == false) { 
 		res.push_back(0);
 		res.push_back(0);
 		res.push_back(0);
@@ -68,6 +80,7 @@ void reverse(vector <double>& arr) {
 int main()
 {
 	vector <double> arr{1, 32 , 4};
+	arr.reserve(100);
 	short number;
 	setlocale(LC_ALL, "RUS");
 	while (true){
