@@ -1,14 +1,29 @@
 #include <iostream>
 #include <array>
 #include <ctime>
+#include <vector>
 using namespace std;
+void prosmotr(array <int, 10> arr) {
+	short k = 0;
+	cout << "[";
+	for (size_t i = 0; i != arr.size(); ++i) {
+		cout << arr[i];
+		++k;
+		if (k < arr.size()) {
+			cout << ", ";
+		}
+	}
+	cout << "]" << endl;
 
+}
 array <int, 10> Sort1(array<int, 10> arr) {
 	cout << "Функция передачи по значению" << endl;
 	short k = 1;
 	cout << "Выберети какую сортировку хотите сделать :" << endl;
 	cout << "1 - Сортировка по убыванию" << endl;
 	cout << "2 - Сортиоровка по возростанию" << endl;
+	cout << "До сортировки" << endl;
+	prosmotr(arr);
 	while (true) {
 		cout << "Введите номер пункт: " << endl;
 		cin >> k;
@@ -20,21 +35,24 @@ array <int, 10> Sort1(array<int, 10> arr) {
 					}
 				}
 			}
+			cout << "После сортировки" << endl;
 			return arr;
 		}
 		else if (k == 2) {
-			for (int i = 0; i << arr.size(); ++i) {
+			for (int i = 0; i < arr.size(); ++i) {
 				for (int j = i + 1; j != arr.size(); ++j) {
 					if (arr[i] > arr[j]) {
 						swap(arr[i], arr[j]);
 					}
 				}
 			}
+			cout << "После сортировки" << endl;
 			return arr;
-		} 
+		}
 		else {
 			cout << "Выберите коретный пункт (1 или 2)" << endl;
 		}
+
 	}
 }
 void Sort2(array<int, 10>& arr) {
@@ -43,6 +61,8 @@ void Sort2(array<int, 10>& arr) {
 	cout << "Выберети какую сортировку хотите сделать :" << endl;
 	cout << "1 - Сортировка по убыванию" << endl;
 	cout << "2 - Сортиоровка по возростанию" << endl;
+	cout << "До сортировки" << endl;
+	prosmotr(arr);
 	while (true) {
 		if (k == 1) {
 			cin >> k;
@@ -53,6 +73,7 @@ void Sort2(array<int, 10>& arr) {
 					}
 				}
 			}
+			cout << "После сортировки" << endl;
 			break;
 		}
 		else if (k == 2) {
@@ -63,6 +84,7 @@ void Sort2(array<int, 10>& arr) {
 					}
 				}
 			}
+			cout << "После сортировки" << endl;
 			break;
 		}
 		else {
@@ -70,12 +92,14 @@ void Sort2(array<int, 10>& arr) {
 		}
 	}
 }
-void Sort2(array<int, 10> *arr_ptr, int n) {
+void Sort2(array<int, 10>* arr_ptr, int n) {
 	cout << "Функция передачи по указателю" << endl;
 	short k = 1;
 	cout << "Выберети какую сортировку хотите сделать :" << endl;
 	cout << "1 - Сортировка по убыванию" << endl;
 	cout << "2 - Сортиоровка по возростанию" << endl;
+	cout << "До сортировки" << endl;
+	prosmotr(*arr_ptr);
 	while (true) {
 		if (k == 1) {
 			cin >> k;
@@ -86,6 +110,7 @@ void Sort2(array<int, 10> *arr_ptr, int n) {
 					}
 				}
 			}
+			cout << "После сортировки" << endl;
 			break;
 		}
 		else if (k == 2) {
@@ -108,21 +133,25 @@ void Sort2(array<int, 10> *arr_ptr, int n) {
 int main() {
 	setlocale(LC_ALL, "RUS");
 	array <int, 10> arr;
+
 	srand(time(NULL));
 	for (int i = 0; i != arr.size(); ++i) {
 		arr[i] = rand() % 20 - 10;
-		cout << arr[i] << " ";
 	}
-	array <int, 10> res = Sort1(arr); // когда передаем значение, у нас в функции создается копия(новая переменная) нашей переменной, из-за этого действия происходящие с массивом в функции не влияют на основной список 
+	array <int, 10> copy_arr = arr;
+	array <int, 10> res = Sort1(arr);// когда передаем значение, у нас в функции создается копия(новая переменная) нашей переменной, из-за этого действия происходящие с массивом в функции не влияют на основной список 
+	prosmotr(res);
+	cout << endl;
 	Sort2(arr);// когда передаем по ссылке, в функции не создается копия и не выделяется под нее память, благодоря этому, тратиться меньше памяти
-	Sort2(&arr, arr.size()); //когда передаем по указателю, нам надо передовать в функцию еще один аргумент - размерность массива
-	for (int i = 0; i != 10; ++i) {
-		cout << arr[i] << " ";
-	}
+	prosmotr(arr);
+	cout << endl;
+	Sort2(&copy_arr, copy_arr.size()); //когда передаем по указателю, нам надо передовать в функцию еще один аргумент - размерность массива
+	prosmotr(copy_arr);
+	
 
 
 
 
 
 }
-
+	
