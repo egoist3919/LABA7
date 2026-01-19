@@ -1,157 +1,205 @@
+
 #include <iostream>
 #include <array>
-#include <ctime>
-#include <vector>
+#include <string>
+#include <typeinfo>
 using namespace std;
-void prosmotr(array <int, 10> arr) {
-	short k = 0;
-	cout << "[";
-	for (size_t i = 0; i != arr.size(); ++i) {
-		cout << arr[i];
-		++k;
-		if (k < arr.size()) {
-			cout << ", ";
-		}
-	}
-	cout << "]" << endl;
+class watch {
+private:
+    bool date(string d) {
+        for (string el : week) {
+            if (el == d) {
+                return true;
+            }
+        }
+        return false;
+    }
+    array <string, 7> week = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
+    int day;
+    int month;
+    int year;
+    int hours;
+    int min;
+    int const high_year = 2024;
+    string day_of_week;
+    int days_of_month(int month, int year) {
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            return 31;
+        }
+        if (month == 4 || month == 6 || month == 9 || month == 11) {
+            return 30;
+        }
+        if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {  
+            return 29;
+        }
+        else {
+            return 28;
+        }
+    }
+
+public:
+    watch() { cout << "Конструктор по умолчанию" << endl; }
+    watch(int d, int m, int y, int h, int mi, string dow) {
+        cout << "Конструктор полного заполнения" << endl;
+        if (date(dow) == false) {
+            throw invalid_argument("Нужно ввести день недели!!!");
+        }
+        if (y < 0) {
+            throw length_error("Год не может быть отрицательным!!!");
+        }
+        if (m > 12 || m < 1) {
+            throw out_of_range("Месяц должен быть от 1 до 12!!!");
+            if (days_of_month(m, y) == 31) {
+                if (d > 31 || d < 0) { throw out_of_range("Дней должно быть не меньше чем 0 и не больше 31"); }
+            }
+            if (days_of_month(m, y) == 30) {
+                if (d > 30 || d < 0) { throw out_of_range("Дней должно быть не меньше чем 0 и не больше 30"); }
+            }
+            if (days_of_month(m, y) == 28) {
+                if (d > 28 || d < 0) { throw out_of_range("Дней должно быть не меньше чем 0 и не больше 28"); }
+            }
+            if (days_of_month(m, y) == 29) {
+                if (d > 29 || d < 0) { throw out_of_range("Дней должно быть не меньше чем 0 и не больше 29"); }
+            }
+        }
+        day = d;
+        month = m;
+        year = y;
+        hours = h;
+        min = mi;
+        SetDay_of_week(dow);
+    }
+    ~watch() { cout << "Класс: Watch удален" << endl;}
+
+    // геттеры
+    int getMonth()const { return month; }
+    int getDay()const { return day; }
+    int getYear()const { return year; }
+    int getHours()const { return hours; }
+    int getMin()const { return min; }
+    string getDay_of_week()const { return day_of_week; }
+    // сеттер
+
+    void SetDay_of_week(string day_of_week1) {
+        if (date(day_of_week1) == false) {
+            throw invalid_argument("Нужно ввести день недели!!!");
+        }
+        day_of_week = day_of_week1;
+    }
+
+    void PrintAll() {
+        cout << "Дата: " << day << '.' << month << '.' << year << endl;
+        cout << "Время: " << hours << ':' << min << endl;
+        cout << "День недели: " << day_of_week << endl;
+    }
+
+    void AddMinute(int x) {
+        min += x;
+        if (x < 0) {
+            throw invalid_argument("Минуты не могут быть отрицательными!!!");
+        }
+        int orig_day = day;
+        if (min >= 60) {
+            hours += min / 60;
+            min = min % 60;
+        }
+
+        if (hours >= 24) {
+            day += hours / 24;
+            hours = hours % 24;
+        }
+
+        while (day > days_of_month(month, year)) {
+            day -= days_of_month(month, year);
+            ++month;
+            if (month > 12) {
+                month = 1;
+                ++year;
+            }
+        }
+        int days_passed = day - orig_day;
+        if (days_passed < 0) {
+            days_passed = days_of_month(month, year) + days_passed;
+        }
+        int ind = -1;
+        if (days_passed > 0) {
+            for (int i = 0; i != week.size(); ++i) {
+                if (week[i] == day_of_week) {
+                    ind = i;
+                    break;
+                }
+            }
+            if (ind != -1) {
+                int new_ind = (ind + days_passed) % 7;
+                day_of_week = week[new_ind];
+            }
+        }
+
+
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "RUS");
+    try {
+        watch myWatch(18, 1, 2026, 3, 17, "Воскресенье");
+        myWatch.AddMinute(1440);
+        myWatch.PrintAll();
+    }
+    catch (invalid_argument& res) {
+        cerr << res.what() << endl;
+    }
+    catch (out_of_range& sss) {
+        cerr << sss.what() << endl;
+    }
+    catch (length_error& e) {
+        cerr << e.what() << endl;
+    }
+    catch (exception& e) {
+        cerr << "Неизвестная ошибка: " << e.what() << endl;
+    }
+
+
+    try {
+        watch myWatch(18, 1, 2026, 3, 17, "Понедельник");
+        myWatch.AddMinute(-1440);
+        myWatch.PrintAll();
+    }
+    catch (invalid_argument& res) {
+        cerr << res.what() << endl;
+    }   
+    catch (out_of_range& sss) {
+        cerr << sss.what() << endl;
+    }
+    catch (length_error& e) {
+        cerr << e.what() << endl;
+    }
+    catch (exception& e) {
+        cerr << "Неизвестная ошибка: " << e.what() << endl;
+    }
+
+
+
+    try {
+        watch myWatch(18, 56, 2026, 3, 17, "Понедельник");
+        myWatch.AddMinute(1440);
+        myWatch.PrintAll();
+    }
+    catch (length_error& er) {
+        cout << er.what() << endl;
+    }
+    catch (invalid_argument& res) {
+        cerr << res.what() << endl;
+    }
+    catch (out_of_range& sss) {
+        cerr << sss.what() << endl;
+    }
+    catch (exception& e) {
+        cerr << "Неизвестная ошибка: " << e.what() << endl;
+    }
+    catch (length_error& e) {
+        cerr << e.what() << endl;
+    }
 
 }
-array <int, 10> Sort1(array<int, 10> arr) {
-	cout << "Функция передачи по значению" << endl;
-	short k = 1;
-	cout << "Выберети какую сортировку хотите сделать :" << endl;
-	cout << "1 - Сортировка по убыванию" << endl;
-	cout << "2 - Сортиоровка по возростанию" << endl;
-	cout << "До сортировки" << endl;
-	prosmotr(arr);
-	while (true) {
-		cout << "Введите номер пункт: " << endl;
-		cin >> k;
-		if (k == 1) {
-			for (int i = 0; i < arr.size(); ++i) {
-				for (int j = i + 1; j != arr.size(); ++j) {
-					if (arr[i] < arr[j]) {
-						swap(arr[i], arr[j]);
-					}
-				}
-			}
-			cout << "После сортировки" << endl;
-			return arr;
-		}
-		else if (k == 2) {
-			for (int i = 0; i < arr.size(); ++i) {
-				for (int j = i + 1; j != arr.size(); ++j) {
-					if (arr[i] > arr[j]) {
-						swap(arr[i], arr[j]);
-					}
-				}
-			}
-			cout << "После сортировки" << endl;
-			return arr;
-		}
-		else {
-			cout << "Выберите коретный пункт (1 или 2)" << endl;
-		}
-
-	}
-}
-void Sort2(array<int, 10>& arr) {
-	cout << "Функция передачи по ссылке" << endl;
-	short k = 1;
-	cout << "Выберети какую сортировку хотите сделать :" << endl;
-	cout << "1 - Сортировка по убыванию" << endl;
-	cout << "2 - Сортиоровка по возростанию" << endl;
-	cout << "До сортировки" << endl;
-	prosmotr(arr);
-	while (true) {
-		if (k == 1) {
-			cin >> k;
-			for (int i = 0; i != arr.size(); ++i) {
-				for (int j = i + 1; j != arr.size(); ++j) {
-					if (arr[i] > arr[j]) {
-						swap(arr[i], arr[j]);
-					}
-				}
-			}
-			cout << "После сортировки" << endl;
-			break;
-		}
-		else if (k == 2) {
-			for (int i = 0; i != arr.size(); ++i) {
-				for (int j = i + 1; j != arr.size(); ++j) {
-					if (arr[i] < arr[j]) {
-						swap(arr[i], arr[j]);
-					}
-				}
-			}
-			cout << "После сортировки" << endl;
-			break;
-		}
-		else {
-			cout << "Выберите коректный пункт (1 или 2)" << endl;
-		}
-	}
-}
-void Sort2(array<int, 10>* arr_ptr, int n) {
-	cout << "Функция передачи по указателю" << endl;
-	short k = 1;
-	cout << "Выберети какую сортировку хотите сделать :" << endl;
-	cout << "1 - Сортировка по убыванию" << endl;
-	cout << "2 - Сортиоровка по возростанию" << endl;
-	cout << "До сортировки" << endl;
-	prosmotr(*arr_ptr);
-	while (true) {
-		if (k == 1) {
-			cin >> k;
-			for (int i = 0; i != n; ++i) {
-				for (int j = i + 1; j != n; ++j) {
-					if ((*arr_ptr)[i] > (*arr_ptr)[j]) {
-						swap((*arr_ptr)[i], (*arr_ptr)[j]);
-					}
-				}
-			}
-			cout << "После сортировки" << endl;
-			break;
-		}
-		else if (k == 2) {
-			for (int i = 0; i != n; ++i) {
-				for (int j = i + 1; j != n; ++j) {
-					if ((*arr_ptr)[i] < (*arr_ptr)[j]) {
-						swap((*arr_ptr)[i], (*arr_ptr)[j]);
-					}
-				}
-			}
-			break;
-		}
-
-		else {
-			cout << "Выберите коректный пункт (1 или 2)" << endl;
-		}
-	}
-}
-
-int main() {
-	setlocale(LC_ALL, "RUS");
-	array <int, 10> arr;
-
-	srand(time(NULL));
-	for (int i = 0; i != arr.size(); ++i) {
-		arr[i] = rand() % 20 - 10;
-	}
-	array <int, 10> copy_arr = arr;
-	array <int, 10> res = Sort1(arr);// когда передаем значение, у нас в функции создается копия(новая переменная) нашей переменной, из-за этого действия происходящие с массивом в функции не влияют на основной список 
-	prosmotr(res);
-	cout << endl;
-	Sort2(arr);// когда передаем по ссылке, в функции не создается копия и не выделяется под нее память, благодоря этому, тратиться меньше памяти
-	prosmotr(arr);
-	cout << endl;
-	Sort2(&copy_arr, copy_arr.size()); //когда передаем по указателю, нам надо передовать в функцию еще один аргумент - размерность массива
-	prosmotr(copy_arr);
-	
-
-
-
-
-
-}
-	
